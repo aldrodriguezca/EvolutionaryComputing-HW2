@@ -3,6 +3,9 @@ package GA;
 import GeneralComponents.*;
 import Problems.Function;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class GA<T> {
     private Individual[] population;
     private double variationOperatorsRate = 0.6;
@@ -11,6 +14,7 @@ public class GA<T> {
     RecombinationStrategy recombinationStrategy;
     SelectionStrategy parentSelectionStrategy;
     ReplacementStrategy replacementStrategy;
+    boolean minimization;
 
     Function function;
 
@@ -21,14 +25,15 @@ public class GA<T> {
         this.variationOperatorsRate = variationOperatorsRate;
     }
 
-    public GA(Individual[] initialPopulation, Function function, double variationOperatorsRate){
+    public GA(Individual[] initialPopulation, Function function, double variationOperatorsRate, boolean minimization){
         this.population = initialPopulation;
         this.function = function;
         this.variationOperatorsRate = variationOperatorsRate;
+        this.minimization = minimization;
     }
 
     public GA(Individual[] initialPopulation, Function function, MutationStrategy mutationStrategy, RecombinationStrategy recombinationStrategy,
-              SelectionStrategy parentSelectionStrategy, ReplacementStrategy replacementStrategy){
+              SelectionStrategy parentSelectionStrategy, ReplacementStrategy replacementStrategy, boolean minimization){
         this.population = initialPopulation;
 
         this.function = function;
@@ -36,6 +41,7 @@ public class GA<T> {
         this.recombinationStrategy = recombinationStrategy;
         this.parentSelectionStrategy = parentSelectionStrategy;
         this.replacementStrategy = replacementStrategy;
+        this.minimization = minimization;
     }
 
 
@@ -56,7 +62,12 @@ public class GA<T> {
         return newPopulation;
     }
 
-    public Individual[] evolve(int nIterations){
+
+
+
+    public GAResults evolve(int nIterations){
+
+        double[] fitnessHistory = new double[nIterations];
         Individual[] parents;
         Individual[] offspring;
 
@@ -71,10 +82,29 @@ public class GA<T> {
                 //population = mergeOffspring(parents, offspring);
                 population = replacementStrategy.selectSurvivals(parents, offspring, function);
             }
-            System.out.println("F:");
-            printPopulationFitness(population, function);
+            //System.out.println("F:");
+            //printPopulationFitness(population, function);
+            Individual[] sortedPopulation = population.clone();
+            if(minimization){
+                Arrays.sort(sortedPopulation, new Comparator<Individual>() {
+                    @Override
+                    public int compare(Individual o1, Individual o2) {
+                        return (int)(o1.evaluateFitness(function)  - o2.evaluateFitness(function));
+                    }
+                });
+            }else{
+                Arrays.sort(sortedPopulation, new Comparator<Individual>() {
+                    @Override
+                    public int compare(Individual o1, Individual o2) {
+                        return (int)(o2.evaluateFitness(function)  - o1.evaluateFitness(function));
+                    }
+                });
+            }
+
+            fitnessHistory[i] = sortedPopulation[0].evaluateFitness(function);
         }
-        return population;
+
+        return new GAResults(population, fitnessHistory);
     }
 
     public void printPopulationFitness(Individual[] population, Function f){
@@ -87,7 +117,8 @@ public class GA<T> {
         }
 
         System.out.println(sb.toString());
-
     }
+
+
 
 }

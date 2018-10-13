@@ -1,8 +1,13 @@
+import DataUtils.DataOutput;
 import GA.GA;
 import GeneralComponents.*;
 import Problems.Deceptive4;
 import Problems.MaxOne;
 import Problems.MaxOneIndividual;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class GATests {
     public static void main(String[] args) {
@@ -55,14 +60,33 @@ public class GATests {
 
         //-------------------------------------------------------------
         int nIterations = 150;
-        GA geneticAlgorithm = new GA(binaryPopulation, deceptive4, mutation, recombination, selection, replacement);
+        GA geneticAlgorithm = new GA(binaryPopulation, deceptive4, mutation, recombination, selection, replacement, false);
 
-        Individual[] solutions = geneticAlgorithm.evolve(nIterations);
+        Individual[] solutions = geneticAlgorithm.evolve(nIterations).getSolutions();
         //-------------------------------------------------------------
-
+        /*
         for(Individual s: solutions){
             System.out.print(s.showRepresentation());
             System.out.println(" f: " + s.evaluateFitness(deceptive4));
+        }*/
+
+
+        HashMap<String, HashMap<String, List<double[]>>> results = new HashMap<>();
+        List<double[]> localResults;
+        HashMap<String, List<double []>> methodsResults = new HashMap<>();
+
+        int nExperiments = 100;
+
+        localResults = new ArrayList<>(nExperiments);
+
+        for(int i = 0; i < nExperiments; i++){
+            localResults.add( geneticAlgorithm.evolve(nIterations).getFitnessHistory());
         }
+
+        methodsResults.put("ga_elitism", localResults);
+
+        results.put("Deceptive4" , methodsResults);
+
+        DataOutput.outputData(results);
     }
 }

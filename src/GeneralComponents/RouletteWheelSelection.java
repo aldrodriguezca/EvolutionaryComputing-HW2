@@ -37,13 +37,13 @@ public class RouletteWheelSelection extends SelectionStrategy {
     public Individual[] selectParents(Individual[] population, Function function) {
 
         Individual[] parents = new Individual[qParentsToSelect];
-        Arrays.sort(population, new Comparator<Individual>() {
+        /*Arrays.sort(population, new Comparator<Individual>() {
             @Override
             public int compare(Individual o1, Individual o2) {
                 double diff = o2.evaluateFitness(function) - o1.evaluateFitness(function);
                 return  diff > 0? 1: diff < 0? -1: 0;
             }
-        });
+        });*/
 
         evaluateFitness(population, function);
 
@@ -54,7 +54,8 @@ public class RouletteWheelSelection extends SelectionStrategy {
         for(int i = 0; i < qParentsToSelect; i++){
             r = Math.random();
             double a_i = 0;
-            a_i += fitnessEvaluations[0];
+            //a_i += fitnessEvaluations[0];
+
 
             index = 0;
 

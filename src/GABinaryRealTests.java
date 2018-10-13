@@ -36,38 +36,41 @@ public class GABinaryRealTests {
         int nDims = 2;
         RecombinationStrategy recombination = new BinaryRealRecombination(popSize);
         SelectionStrategy selection = new Elitism((int)(0.10 * popSize), true);
+        selection = new RouletteWheelSelection((int)(0.10 * popSize));
         ReplacementStrategy replacement = new GenerationalSurvivorSelection();
 
         //------------------
 
         //BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, rastrigin.getxMin(), rastrigin.getxMax(), 4, nDims);
-        //BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, griewank.getxMin(), griewank.getxMax(), 3, nDims);
+        BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, griewank.getxMin(), griewank.getxMax(), 3, nDims);
         //BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, schwefel.getxMin(), schwefel.getxMax(), 3, nDims);
-        BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, rosenbrock.getxMin(), rosenbrock.getxMax(), 3, 2);
-
+        //BinaryRealRepresentation[] population = BinaryRealRepresentation.getRandomPopulation(100, rosenbrock.getxMin(), rosenbrock.getxMax(), 3, 2);
 
         System.out.println("INITIAL POP");
         for(BinaryRealRepresentation i: population){
             System.out.print(i.showRepresentation());
             //System.out.println(" f: " + i.evaluateFitness(rastrigin));
-            //System.out.println(" f: " + i.evaluateFitness(griewank));
-            System.out.println(" f: " + i.evaluateFitness(schwefel));
+            System.out.println(" f: " + i.evaluateFitness(griewank));
+            //System.out.println(" f: " + i.evaluateFitness(schwefel));
+            //System.out.println(" f: " + i.evaluateFitness(rosenbrock));
         }
         //GA geneticAlgorithm = new GA(population, rastrigin, mutation, recombination, selection, replacement);
-        //GA geneticAlgorithm = new GA(population, griewank, mutation, recombination, selection, replacement);
+        GA geneticAlgorithm = new GA(population, griewank, mutation, recombination, selection, replacement, true);
         //GA geneticAlgorithm = new GA(population, schwefel, mutation, recombination, selection, replacement);
-        GA geneticAlgorithm = new GA(population, rosenbrock, mutation, recombination, selection, replacement);
+        //GA geneticAlgorithm = new GA(population, rosenbrock, mutation, recombination, selection, replacement);
 
-        Individual[] solutions = geneticAlgorithm.evolve(nIterations);
+        Individual[] solutions = geneticAlgorithm.evolve(nIterations).getSolutions();
 
         for(Individual s: solutions){
             System.out.print(s.showRepresentation());
             //System.out.println(" f: " + s.evaluateFitness(rastrigin));
-            //System.out.println(" f: " + s.evaluateFitness(griewank));
+            System.out.println(" f: " + s.evaluateFitness(griewank));
             //System.out.println(" f: " + s.evaluateFitness(schwefel));
-            System.out.println(" f: " + s.evaluateFitness(rosenbrock));
-           // System.out.println(showRealRepresentation((BinaryRealRepresentation) s));
+           // System.out.println(" f: " + s.evaluateFitness(rosenbrock));
+            System.out.println(showRealRepresentation((BinaryRealRepresentation) s));
         }
+
+
 
 
     }
